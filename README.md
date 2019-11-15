@@ -2,7 +2,7 @@ Code for the SDSS galaxies data exploration portal
 ```
 https://galaxyportal.space/
 ```
-
+![icon](icon.png)
 Also see
 ```
 https://toast-docs.readthedocs.io/en/latest/
