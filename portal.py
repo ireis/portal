@@ -112,7 +112,7 @@ def get_score_data(field):
 
 def get_anomalies_dict():
 
-    anomalies_dict = {'Favorites':np.load(os.path.join('galaxies/anomalies/temp.npy'))[:51],
+    anomalies_dict = {'Favorites':np.load(os.path.join('galaxies/anomalies/favs.npy')),
                     'Isolation Forest':np.load(os.path.join('galaxies/anomalies/isolation_forest_100.npy'))[:51],
                     'Random Forest v1':np.load(os.path.join('galaxies/anomalies/rf_v0_100.npy'))[:51],
                     'Random Forest v2':np.load(os.path.join('galaxies/anomalies/rf_v1_100.npy'))[:51],
@@ -260,7 +260,7 @@ class astro_web(object):
         self.DECIMATE_NUMBER = 5000
         self.UMAP_XYLIM_DELTA = 0.5
         self.umap_on_load = 6
-        self.nof_stacks = 7
+        self.nof_stacks = 1
         self.n_anomalies = 51
         self.stack_by = 'x'
         #self.stacks_colors = [rgb2hex(   cmap(   i/(self.nof_stacks-1)   )       ) for i in range(self.nof_stacks)]
@@ -276,14 +276,14 @@ class astro_web(object):
         self.register_callbacks()
 
     def __call__(self, doc):
-        doc.add_root(column(row(self.show_anomalies, self.select_anomalies_from), #row(self.show_group, self.select_group),
+        doc.add_root(column(row(  self.show_anomalies, self.select_anomalies_from,), #row(self.show_group, self.select_group),
         row(column(self.umap_figure, self.spectrum_figure, self.link_div, self.stacks_figure),
-                         column(Div(text=""" """),
+                         column(self.title_div, #Div(text=""" """),
                                 self.select_umap, self.select_score,   #self.save_selected, #self.get_order,
                                 self.selected_galaxies_table,  self.search_galaxy, self.select_galaxy,
                                 self.get_stacks, self.select_nof_stacks, self.select_stack_by,
                                 self.select_spectrum_plot_type, self.select_colormap, self.select_score_table, self.update_table, self.internal_reset))))
-        doc.title = 'Galaxies UMAP'
+        doc.title = 'Galaxies'
 
 
 
@@ -352,10 +352,12 @@ class astro_web(object):
         self.get_stacks = Button(label="Get stacks", button_type="success")
         #self.save_selected = Button(label="Save selected", button_type="warning")
 
-
-        self.link_div = Div(text='<center><a href="{}" target="_blank">Galaxy Link {}</a></center>'.format(
-            self.galaxy_link(int(self.select_galaxy.value)),
-            self.galaxy_link(int(self.select_galaxy.value))))
+        self.title_div = Div(text='<center>User manual is available at: <a href="{}" target="_blank">{}</a></center>'.format(
+            'https://toast-docs.readthedocs.io/en/latest/',
+            'toast-docs.readthedocs.io'), style={'font-size': '200%', 'color': 'teal'})
+        self.link_div = Div(text='<center>View galaxy in <a href="{}" target="_blank">{}</a></center>'.format(
+            self.galaxy_link(int(self.select_galaxy.value)), 'SDSS object explorer'),
+            style={'font-size': '120%', 'color': 'teal'})
 
         self.selected_galaxies_columns = [
             TableColumn(field="index", title="Index"),
@@ -522,7 +524,7 @@ class astro_web(object):
         self.stacks_source = ColumnDataSource(
             data=dict(xs=[self.wave]*self.nof_stacks,
                       ys=[np.ones(self.wave.size)+i*0.1 for i in range(self.nof_stacks)],
-                      c=self.stacks_colors)
+                      c=self.stacks_colors[:self.nof_stacks])
 
         )
 
@@ -684,9 +686,9 @@ class astro_web(object):
 
         self.spectrum_line.data_source.data = self.spectrum_source.data
         self.spectrum_figure.title.text = '{}'.format(int(specobjid))
-        self.link_div.text = '<center><a href="{}" target="_blank">Galaxy Link {}</a></center>'.format(
-            self.galaxy_link(int(self.select_galaxy.value)),
-            self.galaxy_link(int(self.select_galaxy.value)))
+        self.link_div.text='<center>View galaxy in <a href="{}" target="_blank">{}</a></center>'.format(
+            self.galaxy_link(int(self.select_galaxy.value)), 'SDSS object explorer')
+
 
         return
 
@@ -764,7 +766,7 @@ class astro_web(object):
         self.stacks_source = ColumnDataSource(
                             data=dict(xs=[self.wave]*self.nof_stacks,
                                       ys=stacks,
-                                      c=self.stacks_colors))
+                                      c=self.stacks_colors[:self.nof_stacks]))
 
 
 
