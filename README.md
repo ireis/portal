@@ -9,7 +9,7 @@ https://toast-docs.readthedocs.io/en/latest/
 ```
 for the user manual.
 
-This repository contains a reduced dataset that could be used to run the portal locally using
+This repository contains a reduced dataset which could be used to run the portal locally, using:
 ```
 python portal.py
 ```
