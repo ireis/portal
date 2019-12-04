@@ -259,7 +259,7 @@ class astro_web(object):
         self.R_DOT = 10
         self.DECIMATE_NUMBER = 5000
         self.UMAP_XYLIM_DELTA = 0.5
-        self.umap_on_load = 6
+        self.umap_on_load = 1
         self.nof_stacks = 1
         self.n_anomalies = 51
         self.stack_by = 'x'
