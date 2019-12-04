@@ -24,7 +24,7 @@ import logging
 import json
 
 
-from umap import UMAP
+#from umap import UMAP
 
 
 logger = logging.getLogger(__name__)
@@ -172,17 +172,18 @@ def get_rank(X_values):
 
     return X_rank
 
-def get_order_from_umap(datasource, selected_objects):
+if False:
+    def get_order_from_umap(datasource, selected_objects):
 
-    nof_objects = len(selected_objects)
-    xs = np.array(datasource['xs'])[selected_objects]
-    ys = np.array(datasource['ys'])[selected_objects]
-    X = np.vstack([xs, ys]).T
-    umap_fitter = UMAP(n_components=1, n_neighbors=min(30,nof_objects-1), min_dist=0.5)
-    order = umap_fitter.fit_transform(X)
-    order = order[:,0]
-    order = get_rank(order)
-    return order
+        nof_objects = len(selected_objects)
+        xs = np.array(datasource['xs'])[selected_objects]
+        ys = np.array(datasource['ys'])[selected_objects]
+        X = np.vstack([xs, ys]).T
+        umap_fitter = UMAP(n_components=1, n_neighbors=min(30,nof_objects-1), min_dist=0.5)
+        order = umap_fitter.fit_transform(X)
+        order = order[:,0]
+        order = get_rank(order)
+        return order
 
 def get_region_points(x_min, x_max, y_min, y_max, datasource):
     IGNORE_TH = -9999
@@ -734,7 +735,6 @@ class astro_web(object):
         selected_spectra_mat = self.specs_gal[selected_inds]
         nof_selected = selected_inds.size
 
-
         if self.stack_by == 'x':
             xs=np.array(self.umap_data[self.select_umap.value][:, 0])
             order = np.array([float(o) for o in xs[selected_inds]])
@@ -747,17 +747,23 @@ class astro_web(object):
             self.selected_objects.data['order'] = list(order)#= dict(index=selected_objects, score=score, order=)
             self.selected_galaxies_source.data = self.selected_objects.data
         elif self.stack_by == 'auto':
-            print('get_order_callback')
-            selected_objects = self.selected_objects.data['index']
-            score = self.selected_objects.data['score']
-            if len(selected_objects) > 2:
-                order = get_order_from_umap(self.umap_source.data, selected_objects)
-                self.selected_objects.data['order'] = list(order)#= dict(index=selected_objects, score=score, order=)
-                self.selected_galaxies_source.data = self.selected_objects.data
+            xs=np.array(self.umap_data[self.select_umap.value][:, 0])
+            order = np.array([float(o) for o in xs[selected_inds]])
+            self.selected_objects.data['order'] = list(order)#= dict(index=selected_objects, score=score, order=)
+            self.selected_galaxies_source.data = self.selected_objects.data
+
+
+            #print('get_order_callback')
+            #selected_objects = self.selected_objects.data['index']
+            #score = self.selected_objects.data['score']
+            #if len(selected_objects) > 2:
+            #    order = get_order_from_umap(self.umap_source.data, selected_objects)
+            #    self.selected_objects.data['order'] = list(order)#= dict(index=selected_objects, score=score, order=)
+            #    self.selected_galaxies_source.data = self.selected_objects.data
                 #self.update_table.value = str(np.random.rand())
-            else:
-                order = numpy.zeros(len(selected_objects))
-            order = np.array([float(o) for o in self.selected_objects.data['order']])
+            #else:
+            #    order = numpy.zeros(len(selected_objects))
+            #order = np.array([float(o) for o in self.selected_objects.data['order']])
 
         delta = 0
         stacks_ = ladder_plot_smooth(selected_spectra_mat, np.arange(nof_selected), order, self.nof_stacks, delta)
