@@ -19,7 +19,7 @@ Required packages include:
 bokeh, pandas, numpy, pylru
 ```
 
-
+For any questions or suggestion send me an email:
 ```
 itamarreis@mail.tau.ac.il
 ```
